@@ -2,7 +2,7 @@ package repository
 
 import (
 	"errors"
-	"go_services_lab/pkg/entity"
+	"go_services_lab/models"
 	"go_services_lab/pkg/repository"
 	"strconv"
 )
@@ -28,14 +28,14 @@ func atoiMap(products map[string]int) (map[int]int, error) {
 	return ret_map, nil
 }
 
-func (s *OrderService) Get(id int) (entity.Order, error) {
+func (s *OrderService) Get(id int) (models.Order, error) {
 	return s.rep.Get(id)
 }
 
 func (s *OrderService) Amount(id int) (float32, error) {
 	return s.rep.Amount(id)
 }
-func (s *OrderService) GetAll() ([]entity.Order, error) {
+func (s *OrderService) GetAll() ([]models.Order, error) {
 	return s.rep.GetAll()
 }
 

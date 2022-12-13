@@ -2,7 +2,7 @@ package repository
 
 import (
 	"errors"
-	"go_services_lab/pkg/entity"
+	"go_services_lab/models"
 	"strconv"
 
 	"github.com/patrickmn/go-cache"
@@ -32,7 +32,7 @@ func (r *ProductCache) getByName(name string) error {
 	for i := 1; i <= count; i++ {
 		pr, fl := r.c.Get("product" + strconv.Itoa(i))
 		if fl {
-			if name == pr.(*entity.Product).Name {
+			if name == pr.(*models.Product).Name {
 				return errors.New("Product with this name exist.")
 			}
 		}
@@ -40,23 +40,23 @@ func (r *ProductCache) getByName(name string) error {
 	return nil
 }
 
-func (r *ProductCache) Create(product entity.Product) (int, error) {
+func (r *ProductCache) Create(product models.Product) (int, error) {
 	curr_id, f := r.getCount()
-	curr_id += 1
 	if f != nil {
 		return 0, errors.New("Unable to get number of products.")
 	}
+	curr_id += 1
 	fl := r.getByName(product.Name)
 	if fl != nil {
 		return 0, fl
 	}
-	r.c.Set("product"+strconv.Itoa(curr_id), &entity.Product{curr_id, product.Name, product.Price}, cache.DefaultExpiration)
+	r.c.Set("product"+strconv.Itoa(curr_id), &models.Product{curr_id, product.Name, product.Price}, cache.DefaultExpiration)
 	r.c.Increment("countProduct", 1)
 	return curr_id, nil
 }
 
-func (r *ProductCache) GetAll() ([]entity.Product, error) {
-	var retList []entity.Product
+func (r *ProductCache) GetAll() ([]models.Product, error) {
+	var retList []models.Product
 	curr_id, f := r.getCount()
 	if f != nil {
 		return retList, errors.New("Unable to get number of products.")
@@ -64,14 +64,14 @@ func (r *ProductCache) GetAll() ([]entity.Product, error) {
 	for i := 1; i <= curr_id; i++ {
 		pr, f := r.c.Get("product" + strconv.Itoa(i))
 		if f {
-			retList = append(retList, entity.Product{pr.(*entity.Product).ID, pr.(*entity.Product).Name, pr.(*entity.Product).Price})
+			retList = append(retList, models.Product{pr.(*models.Product).ID, pr.(*models.Product).Name, pr.(*models.Product).Price})
 		}
 	}
 	return retList, nil
 }
 
-func (r *ProductCache) LastOne() (entity.Product, error) {
-	var retProduct entity.Product
+func (r *ProductCache) LastOne() (models.Product, error) {
+	var retProduct models.Product
 	curr_id, f := r.getCount()
 	if f != nil {
 		return retProduct, errors.New("Unable to get number of products.")
@@ -80,5 +80,5 @@ func (r *ProductCache) LastOne() (entity.Product, error) {
 	if !fl {
 		return retProduct, errors.New("Unable to get last one.")
 	}
-	return entity.Product{pr.(*entity.Product).ID, pr.(*entity.Product).Name, pr.(*entity.Product).Price}, nil
+	return models.Product{pr.(*models.Product).ID, pr.(*models.Product).Name, pr.(*models.Product).Price}, nil
 }

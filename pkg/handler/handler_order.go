@@ -11,14 +11,14 @@ type CreateOrder struct {
 	Products map[string]int `json:"products"`
 }
 
-type OrderID struct {
-	ID int `json:"id"`
+type OID struct {
+	ID int `uri:"id"`
 }
 
-func (h *Handler) getOrderById(c *gin.Context) {
-	var input OrderID
+func (h *HandlerOrder) getOrderById(c *gin.Context) {
+	var input OID
 
-	if err := c.BindJSON(&input); err != nil {
+	if err := c.ShouldBindUri(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid input body\n")
 		return
 	}
@@ -26,19 +26,19 @@ func (h *Handler) getOrderById(c *gin.Context) {
 	order, err := h.services.Order.Get(input.ID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+	} else {
+		c.JSON(http.StatusOK, map[string]interface{}{
+			"id":    order.ID,
+			"uid":   order.UserID,
+			"store": order.Store,
+		})
 	}
-
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"id":    order.ID,
-		"uid":   order.UserID,
-		"store": order.Store,
-	})
 }
 
-func (h *Handler) deleteOrder(c *gin.Context) {
-	var input OrderID
+func (h *HandlerOrder) deleteOrder(c *gin.Context) {
+	var input OID
 
-	if err := c.BindJSON(&input); err != nil {
+	if err := c.ShouldBindUri(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid input body\n")
 		return
 	}
@@ -46,17 +46,18 @@ func (h *Handler) deleteOrder(c *gin.Context) {
 	id, err := h.services.Order.Delete(input.ID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+	} else {
+		c.JSON(http.StatusOK, map[string]interface{}{
+			"id": id,
+		})
 	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"id": id,
-	})
 }
 
-func (h *Handler) calcAmountOrder(c *gin.Context) {
-	var input OrderID
+func (h *HandlerOrder) calcAmountOrder(c *gin.Context) {
+	var input OID
 
-	if err := c.BindJSON(&input); err != nil {
+	if err := c.ShouldBindUri(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid input body\n")
 		return
 	}
@@ -64,14 +65,15 @@ func (h *Handler) calcAmountOrder(c *gin.Context) {
 	amount, err := h.services.Order.Amount(input.ID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+	} else {
+		c.JSON(http.StatusOK, map[string]interface{}{
+			"amount": amount,
+		})
 	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"amount": amount,
-	})
 }
 
-func (h *Handler) addOrder(c *gin.Context) {
+func (h *HandlerOrder) addOrder(c *gin.Context) {
 	var input CreateOrder
 
 	if err := c.BindJSON(&input); err != nil {
@@ -90,7 +92,7 @@ func (h *Handler) addOrder(c *gin.Context) {
 	})
 }
 
-func (h *Handler) getOrderList(c *gin.Context) {
+func (h *HandlerOrder) getOrderList(c *gin.Context) {
 	order_list, err := h.services.Order.GetAll()
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())

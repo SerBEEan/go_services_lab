@@ -6,15 +6,23 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Handler struct {
-	services *service.Service
+type HandlerOrder struct {
+	services *service.ServiceOrder
 }
 
-func NewHandler(services *service.Service) *Handler {
-	return &Handler{services: services}
+func NewHandlerOrder(services *service.ServiceOrder) *HandlerOrder {
+	return &HandlerOrder{services: services}
 }
 
-func (h *Handler) InitRoutes() *gin.Engine {
+type HandlerUser struct {
+	services *service.ServiceUser
+}
+
+func NewHandlerUser(services *service.ServiceUser) *HandlerUser {
+	return &HandlerUser{services: services}
+}
+
+func (h *HandlerOrder) InitRoutesOrder() *gin.Engine {
 	router := gin.New()
 	product := router.Group("/product")
 	{
@@ -24,12 +32,22 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	}
 	order := router.Group("/order")
 	{
-		order.POST("/get", h.getOrderById)
-		order.POST("/del", h.deleteOrder)
-		order.POST("/amount", h.calcAmountOrder)
+		order.POST("/get/:id", h.getOrderById)
+		order.POST("/del/:id", h.deleteOrder)
+		order.POST("/amount/:id", h.calcAmountOrder)
 		order.POST("/add", h.addOrder)
 		order.POST("/all", h.getOrderList)
 	}
+
+	return router
+}
+
+func (h *HandlerUser) InitRoutesUser() *gin.Engine {
+	router := gin.New()
+	router.POST("/get/:id", h.getUserByID)
+	router.POST("/del/:id", h.deleteUser)
+	router.POST("/add", h.addUser)
+	router.POST("/all", h.getUserList)
 
 	return router
 }

@@ -2,7 +2,7 @@ package repository
 
 import (
 	"go_services_lab/models"
-	"go_services_lab/pkg/repository"
+	"go_services_lab/pkg/order/repository"
 )
 
 type Product interface {
@@ -24,25 +24,9 @@ type ServiceOrder struct {
 	Order
 }
 
-type User interface {
-	Get(id int) (models.User, error)
-	Create(models.User) (int, error)
-	GetAll() ([]models.User, error)
-	Delete(id int) (int, error)
-}
-
-type ServiceUser struct {
-	User
-}
-
 func NewServiceOrder(rep *repository.OrderRepository) *ServiceOrder {
 	return &ServiceOrder{
 		Product: NewProductService(rep.Product),
 		Order:   NewOrderService(rep.Order),
-	}
-}
-func NewServiceUser(rep *repository.UserRepository) *ServiceUser {
-	return &ServiceUser{
-		User: NewUserService(rep.User),
 	}
 }

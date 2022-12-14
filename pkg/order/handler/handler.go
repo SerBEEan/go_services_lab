@@ -1,7 +1,7 @@
 package handler
 
 import (
-	service "go_services_lab/pkg/service"
+	service "go_services_lab/pkg/order/service"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,14 +12,6 @@ type HandlerOrder struct {
 
 func NewHandlerOrder(services *service.ServiceOrder) *HandlerOrder {
 	return &HandlerOrder{services: services}
-}
-
-type HandlerUser struct {
-	services *service.ServiceUser
-}
-
-func NewHandlerUser(services *service.ServiceUser) *HandlerUser {
-	return &HandlerUser{services: services}
 }
 
 func (h *HandlerOrder) InitRoutesOrder() *gin.Engine {
@@ -38,16 +30,6 @@ func (h *HandlerOrder) InitRoutesOrder() *gin.Engine {
 		order.POST("/add", h.addOrder)
 		order.POST("/all", h.getOrderList)
 	}
-
-	return router
-}
-
-func (h *HandlerUser) InitRoutesUser() *gin.Engine {
-	router := gin.New()
-	router.POST("/get/:id", h.getUserByID)
-	router.POST("/del/:id", h.deleteUser)
-	router.POST("/add", h.addUser)
-	router.POST("/all", h.getUserList)
 
 	return router
 }

@@ -3,7 +3,7 @@ package repository
 import (
 	"go_services_lab/models"
 
-	"github.com/patrickmn/go-cache"
+	"github.com/jmoiron/sqlx"
 )
 
 type Product interface {
@@ -25,26 +25,9 @@ type OrderRepository struct {
 	Order
 }
 
-type User interface {
-	Get(id int) (models.User, error)
-	Create(models.User) (int, error)
-	GetAll() ([]models.User, error)
-	Delete(id int) (int, error)
-}
-
-type UserRepository struct {
-	User
-}
-
-func NewRepositoryOrder(c *cache.Cache) *OrderRepository {
+func NewRepositoryOrder(db *sqlx.DB) *OrderRepository {
 	return &OrderRepository{
-		Product: NewProductCache(c),
-		Order:   NewOrderCache(c),
-	}
-}
-
-func NewRepositoryUser(c *cache.Cache) *UserRepository {
-	return &UserRepository{
-		User: NewUserCache(c),
+		Product: NewProductPostgres(db),
+		Order:   NewOrderPostgres(db),
 	}
 }

@@ -15,7 +15,7 @@ func (h *HandlerUser) getUserByID(c *gin.Context) {
 	var input UserID
 
 	if err := c.ShouldBindUri(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid input body\n")
+		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
@@ -36,7 +36,7 @@ func (h *HandlerUser) deleteUser(c *gin.Context) {
 	var input UserID
 
 	if err := c.ShouldBindUri(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid input body\n")
+		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
@@ -54,7 +54,7 @@ func (h *HandlerUser) addUser(c *gin.Context) {
 	var input models.User
 
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid input body\n")
+		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 

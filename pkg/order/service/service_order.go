@@ -3,7 +3,7 @@ package repository
 import (
 	"errors"
 	"go_services_lab/models"
-	"go_services_lab/pkg/repository"
+	"go_services_lab/pkg/order/repository"
 	"strconv"
 )
 
@@ -35,6 +35,7 @@ func (s *OrderService) Get(id int) (models.Order, error) {
 func (s *OrderService) Amount(id int) (float32, error) {
 	return s.rep.Amount(id)
 }
+
 func (s *OrderService) GetAll() ([]models.Order, error) {
 	return s.rep.GetAll()
 }

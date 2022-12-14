@@ -2,7 +2,7 @@ package repository
 
 import (
 	"go_services_lab/models"
-	"go_services_lab/pkg/repository"
+	"go_services_lab/pkg/order/repository"
 )
 
 type ProductService struct {

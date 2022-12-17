@@ -30,7 +30,7 @@ func main() {
 	// cache_order.Set("order2", &models.Order{2, 2, models.Stores{{models.Product{1, "Banana", 12.}, 2}, {models.Product{2, "Apple", 16.}, 10}, {models.Product{3, "Orange", 20.}, 25}}}, cache.DefaultExpiration)
 	// cache_order.Set("countOrder", 2, cache.DefaultExpiration)
 	db, err := postgres.NewPostgresDB(postgres.Config{
-		Host:     "localhost",
+		Host:     "postgres_container",
 		Port:     "5432",
 		Username: "postgres",
 		Password: "qweasd",

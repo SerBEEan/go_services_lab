@@ -6,8 +6,6 @@ type Product struct {
 	Price float32 `json:"price" binding:"required"`
 }
 
-type productList []Product
-
 type Store struct {
 	Product `json:"product" binding:"required"`
 	Count   int `json:"count" binding:"required"`

@@ -71,10 +71,12 @@ func (h *HandlerUser) addUser(c *gin.Context) {
 
 func (h *HandlerUser) getUserList(c *gin.Context) {
 	userList, err := h.services.User.GetAll()
+
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+
 	for i := range userList {
 		c.JSON(http.StatusOK, map[string]interface{}{
 			"id":    userList[i].ID,

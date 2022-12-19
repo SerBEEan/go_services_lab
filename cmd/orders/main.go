@@ -5,9 +5,6 @@ import (
 	order_handler "go_services_lab/pkg/order/handler"
 	order_repository "go_services_lab/pkg/order/repository"
 	order_service "go_services_lab/pkg/order/service"
-	user_handler "go_services_lab/pkg/user/handler"
-	user_repository "go_services_lab/pkg/user/repository"
-	user_service "go_services_lab/pkg/user/service"
 	postgres "go_services_lab/postgres"
 	server "go_services_lab/server"
 	"log"
@@ -47,28 +44,9 @@ func main() {
 	handler_order := order_handler.NewHandlerOrder(service_order)
 
 	server_order := new(server.Server)
-	go func() {
-		if err := server_order.Run("8000", handler_order.InitRoutesOrder()); err != nil {
-			log.Printf("listen: %s\n", err)
-		}
-	}()
-
-	// cache_user := cache.New(5*time.Minute, 10*time.Minute)
-	// cache_user.Set("user1", &models.User{1, "Alexey", "lewka", "lewka007"}, cache.DefaultExpiration)
-	// cache_user.Set("user2", &models.User{2, "Ivan", "vane4ka", "trueMan_"}, cache.DefaultExpiration)
-	// cache_user.Set("user3", &models.User{3, "Masha", "tyan", "mashanyasha"}, cache.DefaultExpiration)
-	// cache_user.Set("countUser", 3, cache.DefaultExpiration)
-
-	repository_user := user_repository.NewRepositoryUser(db)
-	service_user := user_service.NewServiceUser(repository_user)
-	handler_user := user_handler.NewHandlerUser(service_user)
-
-	server_user := new(server.Server)
-	go func() {
-		if err := server_user.Run("8001", handler_user.InitRoutesUser()); err != nil {
-			log.Printf("listen: %s\n", err)
-		}
-	}()
+	if err := server_order.Run("8000", handler_order.InitRoutesOrder()); err != nil {
+		log.Printf("listen: %s\n", err)
+	}
 
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
@@ -80,10 +58,6 @@ func main() {
 
 	if err := server_order.Shutdown(ctx); err != nil {
 		log.Fatal("Server order forced to shutdown:", err)
-	}
-
-	if err := server_user.Shutdown(ctx); err != nil {
-		log.Fatal("Server user forced to shutdown:", err)
 	}
 
 	log.Println("Server exiting")

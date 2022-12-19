@@ -49,12 +49,26 @@ services:
     networks:
       - go_app
 
-  app:
-    container_name: go_app_container
-    build: ./
+  orders_servise:
+    container_name: go_orders_servise_container
+    build:
+      context: .
+      dockerfile: OrdersDockerfile
     ports:
       - "8000:8000"
-      - "8001:8001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - go_app
+  
+  users_servise:
+    container_name: go_users_servise_container
+    build:
+      context: .
+      dockerfile: UsersDockerfile
+    ports:
+      - "8001:8000"
     depends_on:
       postgres:
         condition: service_healthy

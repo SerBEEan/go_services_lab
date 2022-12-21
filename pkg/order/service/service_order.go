@@ -1,10 +1,16 @@
 package repository
 
 import (
+	"context"
 	"errors"
+	"fmt"
 	"go_services_lab/models"
 	"go_services_lab/pkg/order/repository"
+	"go_services_lab/pkg/user/proto"
+	"log"
 	"strconv"
+
+	"google.golang.org/grpc"
 )
 
 type OrderService struct {
@@ -32,6 +38,22 @@ func (s *OrderService) Delete(id int) (int, error) {
 }
 
 func (s *OrderService) Create(user_id int, products map[string]int) (int, error) {
+	conn, err := grpc.Dial("go_users_service_container:8080", grpc.WithInsecure())
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	client := proto.NewUsersClient(conn)
+	res, err := client.IsExistById(context.Background(), &proto.IsExistByIdRequest{Id: int32(user_id)})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	isUserExist := res.GetIsExist()
+	if !isUserExist {
+		return 0, fmt.Errorf("There is no user with id == %d", user_id)
+	}
+
 	pr, err := atoiMap(products)
 
 	if err != nil {

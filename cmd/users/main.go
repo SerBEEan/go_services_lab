@@ -3,17 +3,20 @@ package main
 import (
 	"context"
 	user_handler "go_services_lab/pkg/user/handler"
+	"go_services_lab/pkg/user/proto"
 	user_repository "go_services_lab/pkg/user/repository"
 	user_service "go_services_lab/pkg/user/service"
 	postgres "go_services_lab/postgres"
 	server "go_services_lab/server"
 	"log"
+	"net"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
 	_ "github.com/lib/pq"
+	"google.golang.org/grpc"
 )
 
 func main() {
@@ -39,6 +42,21 @@ func main() {
 	repository_user := user_repository.NewRepositoryUser(db)
 	service_user := user_service.NewServiceUser(repository_user)
 	handler_user := user_handler.NewHandlerUser(service_user)
+
+	go func() {
+		s := grpc.NewServer()
+		srv := &user_repository.GRPCUsersServer{User: service_user}
+		proto.RegisterUsersServer(s, srv)
+
+		l, err := net.Listen("tcp", ":8080")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if err := s.Serve(l); err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	server_user := new(server.Server)
 	if err := server_user.Run("8000", handler_user.InitRoutesUser()); err != nil {

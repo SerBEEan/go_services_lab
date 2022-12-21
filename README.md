@@ -13,6 +13,12 @@ docker run -v $(pwd)/migrations:/migrations --network go_services_lab_go_app mig
 ## PgAdmin
 По пути `http://localhost:5050`
 
+## gRPC
+Для генерации
+```
+protoc --proto_path=proto --go_out=plugins=grpc:pkg/user/proto --go_opt=paths=source_relative users.proto
+```
+
 ## Задание №1 
 ### Сервис пользователей
 
